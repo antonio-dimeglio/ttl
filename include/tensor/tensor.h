@@ -189,8 +189,6 @@ Tensor* TensorDiv(Tensor* a, Tensor* b);
 */
 void TensorDiv_(Tensor* a, Tensor* b);
 
-// ============ Scalar Arithmetic ============
-
 /*
 *   Returns a new tensor: result = a + scalar (elementwise)
 */
@@ -230,7 +228,6 @@ Tensor* TensorDivScalar(Tensor* a, float scalar);
 *   In-place scalar division: a = a / scalar
 */
 void TensorDivScalar_(Tensor* a, float scalar);
-
 
 /*
 *   Returns a new tensor: result = -a (elementwise negation)
@@ -333,7 +330,6 @@ float TensorMin(Tensor* a);
 */
 Tensor* TensorMinDim(Tensor* a, usize dim, bool keepdim);
 
-
 /*
 *   Matrix multiplication: result = a @ b
 *   a must be shape [..., M, K], b must be shape [..., K, N]
@@ -402,7 +398,7 @@ Tensor* TensorTanh(Tensor* a);
 void TensorTanh_(Tensor* a);
 
 /*
-*   Returns a new tensor: softmax along specified dimension
+*   Returns a new tensor with softmax applied along specified dimension
 *   result[i] = exp(a[i]) / sum(exp(a))
 */
 Tensor* TensorSoftmax(Tensor* a, usize dim);
