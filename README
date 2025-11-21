@@ -1,0 +1,5 @@
+# Tiny Tensor Library (TTL)
+
+TTL is designed to be a lightweight and easy to use library for tensors. 
+This is achieved by supporting only one datatype, F32.
+The library tries to support _most_ of what numpy APIs, with the goal to use this library as the backend for a full python library in its v2. 
