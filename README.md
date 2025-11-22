@@ -13,3 +13,6 @@ The same philosophy is applied to other tools of the library.
 # Contributing
 Contributions are welcome! Feel free to open an issue if you find bugs or if you'd like a feature to be implemented, or even better if you'd like
 to implement one yourself!
+
+# Note
+Currently code still relies on external dependencies for foundation testing purposes. In the future, said dependencies will be removed.
