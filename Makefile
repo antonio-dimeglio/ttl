@@ -5,11 +5,12 @@ LIBS = -lm
 INCLUDEDIR = include
 SRCDIR = src
 BUILDDIR = build
-SRCS = $(shell find $(SRCDIR) -name '*.c')
-OBJS = $(SRCS:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
-TARGET = ttl
 
-# BLAS detection: tries pkg-config, then platform-specific paths, then falls back to naive
+# Only compile library sources (tensor, random, etc.) — no main.c
+SRCS = $(shell find $(SRCDIR) -name '*.c' ! -name 'main.c')
+OBJS = $(SRCS:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
+
+# BLAS detection
 ifdef USE_BLAS
     CFLAGS += -DUSE_BLAS
     LIBS += $(or $(BLAS_LIB),-lopenblas)
@@ -35,21 +36,31 @@ else
     endif
 endif
 
-all: $(TARGET)
-
-$(TARGET): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
+# Build library objects only
+all: $(OBJS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# MNIST example
+MNIST_DIR = examples/mnist
+MNIST_TARGET = $(MNIST_DIR)/mnist
+MNIST_LIBS = $(LIBS) -lz
+
+mnist: $(OBJS)
+	$(CC) $(CFLAGS) $(MNIST_DIR)/main.c $(OBJS) -o $(MNIST_TARGET) $(LDFLAGS) $(MNIST_LIBS)
+
+run-mnist:
+	$(MNIST_DIR)/mnist --download 
+
+# Cleanup
 clean:
-	rm -rf $(BUILDDIR) $(TARGET)
+	rm -rf $(BUILDDIR)
 
-depend: $(SRCS)
-	$(CC) $(CFLAGS) -MM $^ | sed 's|^\(.*\)\.o:|$(BUILDDIR)/\1.o:|' > .depend
+clean-mnist:
+	rm -f $(MNIST_TARGET)
 
--include .depend
+clean-all: clean clean-mnist
 
-.PHONY: all clean depend
+.PHONY: all clean clean-mnist clean-all mnist

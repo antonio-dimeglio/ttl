@@ -1,6 +1,7 @@
 #ifndef TTL_TENSOR_H
 #define TTL_TENSOR_H
 #include "core/types.h"
+#include "random/random.h"
 #include "slice.h"
 #include <omp.h>
 #include <math.h>
@@ -60,6 +61,16 @@ Tensor* TensorOnes(usize* dims, usize ndims);
 *   Returns a tensor with all values initialized to _value_.
 */
 Tensor* TensorFill(usize* dims, usize ndims, float value);
+
+/*
+*   Returns a tensor with all values initialized from values sampled from a normal distribution.
+*/
+Tensor* TensorRandN(usize* dims, usize ndims, float mean, float std);
+
+/*
+*   Returns a tensor with all values initialized from values sampled from a uniform distribution.
+*/
+Tensor* TensorRandU(usize* dims, usize ndims, float low, float high);
 
 /*
 *   Returns the number of dimensions of a tensor.

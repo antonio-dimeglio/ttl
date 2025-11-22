@@ -7,6 +7,7 @@
 
 typedef size_t usize;
 typedef int32_t isize;
+typedef uint32_t usize32;
 
 
 #define ISIZE_MAX INT32_MAX

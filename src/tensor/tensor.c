@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <omp.h>
 #ifdef USE_BLAS
     #ifdef USE_ACCELERATE
         #include <Accelerate/Accelerate.h>
@@ -11,7 +11,7 @@
     #endif
 #endif
 
-#define OMP_THRESHOLD 10000
+#define OMP_THRESHOLD 500000
 #define SIMD_THRESHOLD 32
 
 #define TENSOR_LOOP(size, body) do { \
@@ -139,6 +139,30 @@ Tensor* TensorFill(usize* dims, usize ndims, float value) {
     for (usize i = 0; i < t->length; i++) {
         t->data[i] = value;
     }
+    return t;
+}
+
+Tensor* TensorRandN(usize* dims, usize ndims, float mean, float std) {
+    Tensor* t = TensorNew(dims, ndims);
+    float* data = TensorData(t);
+    usize size = TensorSize(t);
+    
+    for (usize i = 0; i < size; i++) {
+        data[i] = gaussian(mean, std);
+    }
+    
+    return t;
+}
+
+Tensor* TensorRandU(usize* dims, usize ndims, float low, float high) {
+    Tensor* t = TensorNew(dims, ndims);
+    float* data = TensorData(t);
+    usize size = TensorSize(t);
+    
+    for (usize i = 0; i < size; i++) {
+        data[i] = uniformRange(low, high);
+    }
+    
     return t;
 }
 
