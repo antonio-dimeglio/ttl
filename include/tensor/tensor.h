@@ -93,9 +93,52 @@ usize TensorSize(Tensor* t);
 usize TensorDim(Tensor* t, usize d);
 
 /*
+*   Returns the stride along a given dimension of a tensor.
+*/
+usize TensorStride(Tensor* t, usize d);
+
+/*
 *   Returns a pointer to the underlying data array.
 */
 float* TensorData(Tensor* t);
+
+/*
+*   Returns true if the tensor is a view (doesn't own its data).
+*/
+bool TensorIsView(Tensor* t);
+
+/*
+*   Returns true if the tensor data is contiguous in memory.
+*/
+bool TensorIsContiguous(Tensor* t);
+
+/*
+*   Returns the base tensor if this is a view, or the tensor itself if it owns data.
+*/
+Tensor* TensorBase(Tensor* t);
+
+/*
+*   Creates a view of the tensor (shares data, increments reference count).
+*/
+Tensor* TensorView(Tensor* t);
+
+/*
+*   Returns a contiguous copy if tensor is not contiguous, otherwise returns a view.
+*/
+Tensor* TensorAsContiguous(Tensor* t);
+
+/*
+*   Broadcasts tensor to a target shape. Returns a view with modified strides.
+*   Uses zero-stride trick for broadcasted dimensions (no data copying).
+*   Follows NumPy broadcasting rules.
+*/
+Tensor* TensorBroadcastTo(Tensor* t, usize* target_shape, usize target_ndims);
+
+/*
+*   Checks if two tensors are broadcast-compatible and returns the broadcast shape.
+*   Returns NULL if shapes are incompatible. Caller must free the returned array.
+*/
+usize* TensorBroadcastShape(Tensor* a, Tensor* b, usize* out_ndims);
 
 /*
 *   Returns true if a and b shape match, false otherwise.
@@ -291,14 +334,199 @@ Tensor* TensorSqrt(Tensor* a);
 void TensorSqrt_(Tensor* a);
 
 /*
-*   Returns a new tensor: result = a^p (elementwise power)
+*   Returns a new tensor: result = a^p (elementwise power, scalar exponent)
 */
 Tensor* TensorPow(Tensor* a, float p);
 
 /*
-*   In-place power: a = a^p
+*   In-place power: a = a^p (scalar exponent)
 */
 void TensorPow_(Tensor* a, float p);
+
+/*
+*   Returns a new tensor: result = a^b (elementwise power, tensor exponent)
+*/
+Tensor* TensorPowT(Tensor* a, Tensor* b);
+
+/*
+*   Returns a new tensor: result = sin(a) (elementwise)
+*/
+Tensor* TensorSin(Tensor* a);
+
+/*
+*   In-place sin: a = sin(a)
+*/
+void TensorSin_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = asin(a) (elementwise)
+*/
+Tensor* TensorAsin(Tensor* a);
+
+/*
+*   In-place sin: a = asin(a)
+*/
+void TensorAsin_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = acos(a) (elementwise)
+*/
+Tensor* TensorAcos(Tensor* a);
+
+/*
+*   In-place sin: a = acos(a)
+*/
+void TensorAcos_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = atan(a) (elementwise)
+*/
+Tensor* TensorAtan(Tensor* a);
+
+/*
+*   In-place atan: a = atan(a)
+*/
+void TensorAtan_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = atanh(a) (elementwise)
+*/
+Tensor* TensorAtanh(Tensor* a);
+
+/*
+*   In-place atanh: a = atanh(a)
+*/
+void TensorAtanh_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = sinh(a) (elementwise)
+*/
+Tensor* TensorSinh(Tensor* a);
+
+/*
+*   In-place sin: a = sinh(a)
+*/
+void TensorSinh_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = cosh(a) (elementwise)
+*/
+Tensor* TensorCosh(Tensor* a);
+
+/*
+*   In-place sin: a = cosh(a)
+*/
+void TensorCosh_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = cos(a) (elementwise)
+*/
+Tensor* TensorCos(Tensor* a);
+
+/*
+*   In-place cos: a = cos(a)
+*/
+void TensorCos_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = tan(a) (elementwise)
+*/
+Tensor* TensorTan(Tensor* a);
+
+/*
+*   In-place sin: a = tan(a)
+*/
+void TensorTan_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = floor(a) (elementwise)
+*/
+Tensor* TensorFloor(Tensor* a);
+
+/*
+*   In-place floor: a = floor(a)
+*/
+void TensorFloor_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = ceil(a) (elementwise)
+*/
+Tensor* TensorCeil(Tensor* a);
+
+/*
+*   In-place ceil: a = ceil(a)
+*/
+void TensorCeil_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = round(a) (elementwise)
+*/
+Tensor* TensorRound(Tensor* a);
+
+/*
+*   In-place round: a = round(a)
+*/
+void TensorRound_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = a % b (elementwise modulo)
+*/
+Tensor* TensorMod(Tensor* a, Tensor* b);
+
+/*
+*   Returns a new tensor: result = atan2(a, b) (elementwise)
+*/
+Tensor* TensorAtan2(Tensor* a, Tensor* b);
+
+/*
+*   Returns a new tensor: result = min(a, b) (elementwise minimum)
+*/
+Tensor* TensorMin2(Tensor* a, Tensor* b);
+
+/*
+*   Returns a new tensor: result = max(a, b) (elementwise maximum)
+*/
+Tensor* TensorMax2(Tensor* a, Tensor* b);
+
+/*
+*   Returns a new tensor: result = isnan(a) (elementwise)
+*/
+Tensor* TensorIsNan(Tensor* a);
+
+/*
+*   Returns a new tensor: result = isinf(a) (elementwise)
+*/
+Tensor* TensorIsInf(Tensor* a);
+
+/*
+*   Returns a new tensor: result = sign(a) (elementwise)
+*/
+Tensor* TensorSign(Tensor* a);
+
+/*
+*   In-place sign: a = sign(a)
+*/
+void TensorSign_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = 1/a (elementwise)
+*/
+Tensor* TensorReciprocal(Tensor* a);
+
+/*
+*   In-place reciprocal: a = 1/a
+*/
+void TensorReciprocal_(Tensor* a);
+
+/*
+*   Returns a new tensor: result = a^2 (elementwise)
+*/
+Tensor* TensorSquare(Tensor* a);
+
+/*
+*   In-place square: a = a^2
+*/
+void TensorSquare_(Tensor* a);
 
 /*
 *   Returns the sum of all elements.
@@ -312,6 +540,17 @@ float TensorSum(Tensor* a);
 Tensor* TensorSumDim(Tensor* a, usize dim, bool keepdim);
 
 /*
+*   Returns the product of all elements.
+*/
+float TensorProd(Tensor* a);
+
+/*
+*   Returns a new tensor with product along specified dimension.
+*   If keepdim is true, the reduced dimension is kept as size 1.
+*/
+Tensor* TensorProdDim(Tensor* a, usize dim, bool keepdim);
+
+/*
 *   Returns the mean of all elements.
 */
 float TensorMean(Tensor* a);
@@ -320,6 +559,28 @@ float TensorMean(Tensor* a);
 *   Returns a new tensor with mean along specified dimension.
 */
 Tensor* TensorMeanDim(Tensor* a, usize dim, bool keepdim);
+
+/*
+*   Returns the variance of all elements.
+*   If unbiased is set to true, the variance is computed by dividing by N-1, n otherwise
+*/
+float TensorVar(Tensor* a, bool unbiased);
+
+/*
+*   Returns a new tensor with variance along specified dimension.
+*/
+Tensor* TensorVarDim(Tensor* a, usize dim, bool keepdim, bool unbiased);
+
+/*
+*   Returns the standard deviation of all elements.
+*   If unbiased is set to true, the variance is computed by dividing by N-1, n otherwise
+*/
+float TensorStd(Tensor* a, bool unbiased);
+
+/*
+*   Returns a new tensor with variance along specified dimension.
+*/
+Tensor* TensorStdDim(Tensor* a, usize dim, bool keepdim, bool unbiased);
 
 /*
 *   Returns the maximum value of all elements.
@@ -332,6 +593,17 @@ float TensorMax(Tensor* a);
 Tensor* TensorMaxDim(Tensor* a, usize dim, bool keepdim);
 
 /*
+*   Returns the dimension of the max value in the tensor.
+*/
+float TensorArgMax(Tensor* a);
+
+/*
+*   Returns a new tensor with argmax along specified dimension.
+*/
+Tensor* TensorArgMaxDim(Tensor* a, usize dim, bool keepdim);
+
+
+/*
 *   Returns the minimum value of all elements.
 */
 float TensorMin(Tensor* a);
@@ -340,6 +612,16 @@ float TensorMin(Tensor* a);
 *   Returns a new tensor with min along specified dimension.
 */
 Tensor* TensorMinDim(Tensor* a, usize dim, bool keepdim);
+
+/*
+*   Returns the dimension of the min value in the tensor.
+*/
+float TensorArgMin(Tensor* a);
+
+/*
+*   Returns a new tensor with argmin along specified dimension.
+*/
+Tensor* TensorArgMinDim(Tensor* a, usize dim, bool keepdim);
 
 /*
 *   Matrix multiplication: result = a @ b
@@ -377,6 +659,56 @@ Tensor* TensorGe(Tensor* a, Tensor* b);
 *   Returns a new tensor: result[i] = (a[i] <= b[i]) ? 1.0 : 0.0
 */
 Tensor* TensorLe(Tensor* a, Tensor* b);
+
+/*
+*   Returns a new tensor: result[i] = (a[i] != b[i]) ? 1.0 : 0.0
+*/
+Tensor* TensorNe(Tensor* a, Tensor* b);
+
+/*
+*   Returns a new tensor: result[i] = (a[i] == scalar) ? 1.0 : 0.0
+*/
+Tensor* TensorEqScalar(Tensor* a, float scalar);
+
+/*
+*   Returns a new tensor: result[i] = (a[i] != scalar) ? 1.0 : 0.0
+*/
+Tensor* TensorNeScalar(Tensor* a, float scalar);
+
+/*
+*   Returns a new tensor: result[i] = (a[i] > scalar) ? 1.0 : 0.0
+*/
+Tensor* TensorGtScalar(Tensor* a, float scalar);
+
+/*
+*   Returns a new tensor: result[i] = (a[i] < scalar) ? 1.0 : 0.0
+*/
+Tensor* TensorLtScalar(Tensor* a, float scalar);
+
+/*
+*   Returns a new tensor: result[i] = (a[i] >= scalar) ? 1.0 : 0.0
+*/
+Tensor* TensorGeScalar(Tensor* a, float scalar);
+
+/*
+*   Returns a new tensor: result[i] = (a[i] <= scalar) ? 1.0 : 0.0
+*/
+Tensor* TensorLeScalar(Tensor* a, float scalar);
+
+/*
+*   Returns a new tensor: result[i] = (a[i] && b[i]) ? 1.0 : 0.0 (logical AND)
+*/
+Tensor* TensorAnd(Tensor* a, Tensor* b);
+
+/*
+*   Returns a new tensor: result[i] = (a[i] || b[i]) ? 1.0 : 0.0 (logical OR)
+*/
+Tensor* TensorOr(Tensor* a, Tensor* b);
+
+/*
+*   Returns a new tensor: result[i] = (a[i] XOR b[i]) ? 1.0 : 0.0 (logical XOR)
+*/
+Tensor* TensorXor(Tensor* a, Tensor* b);
 
 /*
 *   Returns a new tensor: result = max(0, a) (ReLU)
